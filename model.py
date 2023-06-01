@@ -3,7 +3,7 @@ from pytube import YouTube
 import ffmpeg as ff
 # TODO super długie nazwy plików: https://www.youtube.com/watch?v=aamHoDycjro
 # TODO age restriction, https://www.youtube.com/watch?v=kgboGhzs3A4 WARNING
-# TODO plik docelowy, shemat w jsonie ?
+# TODO plik docelowy, schemat w jsonie ?
 
 
 class YoutubeDownloaderModel:

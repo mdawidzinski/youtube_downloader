@@ -3,11 +3,12 @@ from tkinter.ttk import Combobox
 
 # TODO cudzysłowy
 # TODO bordery
-# TODO ostatnie 10 wpisanych url
+# TODO ostatnie 10 wpisanych url, przykład w test.py, po kliknięciu DOWNLOAD dodanie do listy,
+#  if > 10 ostatnie kasowane
 # TODO in progres...
-# TODO if count(-) > 1
+# TODO if count(-) > 1 przy bardziej złożonych nazwach plików do obserwacji
 # TODO schemat grafiki, json. kontroler czy osobne cudo?
-# TODO invalid link
+# TODO invalid link WARNING
 # TODO controler grafiki, clasa
 font = ('Arial', '28')
 
@@ -47,7 +48,7 @@ class DownloaderGui:
 
         self.type_label = Label(self.format_frame, text='Choose Format:', font=font)
         self.type_label.grid(row=0)
-
+        # TODO blokada zmiany tekstu:
         self.type_box = Combobox(self.format_frame, font=font, textvariable=self.selected_option, values=self.options)
         self.type_box.grid(row=1)
 
@@ -56,7 +57,7 @@ class DownloaderGui:
 
         self.length_label = Label(self.length_frame, text='Length:', font=font, bg='#9DF1DF')
         self.length_label.grid(row=0)
-
+        # TODO checkboxy do zablokowania i warunki
         self.full_checkbox = Radiobutton(self.length_frame, text='Full', font=font, variable=self.length_option,
                                          value='Full', bg='#9DF1DF')
         self.full_checkbox.grid(row=1)
@@ -82,7 +83,7 @@ class DownloaderGui:
 
         self.bottom_frame = Frame(self.root)
         self.bottom_frame.pack()
-
+        # TODO do modyfikacji:
         self.download_button = Button(self.bottom_frame, text='Download', font=font, state=DISABLED,
                                       command=self.download)
         self.download_button.grid(row=0, column=1)
@@ -155,6 +156,7 @@ class DownloaderGui:
         end_time = (hour, minute, second)
 
         self.controller.download(url, format_type, start_time, end_time)
+        # TODO tu dołożyć dodanie do listy
 
     def get_start_values(self):
         hour = self.start_hour_entry.get() or '00'

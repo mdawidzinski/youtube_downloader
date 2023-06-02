@@ -5,7 +5,6 @@ import ffmpeg as ff
 # TODO age restriction, https://www.youtube.com/watch?v=kgboGhzs3A4 WARNING
 # TODO plik docelowy, schemat w jsonie ?
 
-
 class YoutubeDownloaderModel:
     def get_video_duration(self, url):
         yt = YouTube(url)

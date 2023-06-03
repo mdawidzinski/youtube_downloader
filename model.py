@@ -1,11 +1,20 @@
 import os
 from pytube import YouTube
 import ffmpeg as ff
+import os.path as mypath  # allows work with path, allias dodałem żeby było łatwiej
 # TODO super długie nazwy plików: https://www.youtube.com/watch?v=aamHoDycjro
 # TODO age restriction, https://www.youtube.com/watch?v=kgboGhzs3A4 WARNING
 # TODO plik docelowy, schemat w jsonie ?
+# TODO zapytanie o tryb administratora
 
 class YoutubeDownloaderModel:
+
+    def folder_creator(self, folder_path):
+        # tymczasowo tutaj, jak ogarnę wybór ścieżki przez użytkownika poleci do kontrolera
+        if not mypath.exists(folder_path):
+            os.makedirs(folder_path)
+
+
     def get_video_duration(self, url):
         yt = YouTube(url)
         duration = int(yt.length)
@@ -18,8 +27,13 @@ class YoutubeDownloaderModel:
         return yt, file_name
 
     def download_video(self, url):
+        folder_path = 'download/video'
         yt, file_name = self.data(url)
         video = yt.streams.get_highest_resolution()  # extract video from YouTube
+
+        self.folder_creator(folder_path)
+
+        file_name = mypath.join(folder_path, file_name)
         video.download(filename=file_name)  # download video
 
         return file_name
@@ -34,13 +48,18 @@ class YoutubeDownloaderModel:
                 return audio_stream, file_name
 
     def download_mp4(self, url):
+        folder_path = 'download/audio'
         audio_stream, file_name = self.get_highest_bitrate_audio_stream(url)
-        print(file_name)
+
+        self.folder_creator(folder_path)
+
+        file_name = mypath.join(folder_path, file_name)
         audio_name = audio_stream.download(filename=file_name)
+
         return audio_name
 
     def convert_to_mp3(self, audio_filename):
-        audio_file_mp3 = audio_filename[:-4] + ".mp3"
+        audio_file_mp3 = audio_filename[:-4] + '.mp3'
         (
             ff.input(audio_filename)
             .output(audio_file_mp3)
@@ -53,9 +72,9 @@ class YoutubeDownloaderModel:
         base = input_filename
         output_filename = 'temp.mp4'
         if end_time is None:
-            ff.input(input_filename).output(output_filename, ss=start_time, acodec="copy").run()
+            ff.input(input_filename).output(output_filename, ss=start_time, acodec='copy').run()
         else:
-            ff.input(input_filename).output(output_filename, ss=start_time, to=end_time, acodec="copy").run()
+            ff.input(input_filename).output(output_filename, ss=start_time, to=end_time, acodec='copy').run()
 
         os.remove(input_filename)
         os.rename(output_filename, base)

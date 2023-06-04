@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 
+
 def add_link():
     link = entry.get()
     entry.delete(0, tk.END)
@@ -10,10 +11,12 @@ def add_link():
             archival_links.pop(0)
     combobox["values"] = archival_links
 
+
 def select_link(event):
     selected_link = combobox.get()
     entry.delete(0, tk.END)
     entry.insert(0, selected_link)
+
 
 root = tk.Tk()
 

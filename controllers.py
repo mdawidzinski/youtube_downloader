@@ -1,4 +1,53 @@
 from tkinter import messagebox
+from tkinter import filedialog
+import json
+
+CONFIG_FILE = 'config.json'  # TODO gdzie to upchnąć?
+
+
+class PathController:
+    def __init__(self, model):
+        self.model = model
+
+        self.default_file_paths = {
+            'audio': 'download/audio',
+            'video': 'download/video'
+        }
+        self.file_paths = self.load_paths_from_config()
+
+        for key, value in self.default_file_paths.items():
+            if key in self.file_paths:
+                self.default_file_paths[key] = self.file_paths[key]
+            else:
+                self.file_paths[key] = value
+
+        self.save_paths_to_config()
+
+    def save_paths_to_config(self):
+        with open(CONFIG_FILE, 'w') as file:
+            json.dump(self.file_paths, file)
+
+    def load_paths_from_config(self):
+        try:
+            with open(CONFIG_FILE, 'r') as file:
+                return json.load(file)
+        except (FileNotFoundError, json.JSONDecodeError):
+            return {}
+
+    def folder_path_set(self):
+        path_dict = self.load_paths_from_config()
+        for key, value in path_dict.items():
+            if key == 'video':
+                self.model.video_folder_path = value
+            else:
+                self.model.audio_folder_path = value
+
+    def select_save_path(self, file_key):
+        initial_dir = self.file_paths.get(file_key, None)  # Pobranie obecnej ścieżki jako initialdir
+        save_path = filedialog.askdirectory(initialdir=initial_dir)
+        if save_path:
+            self.file_paths[file_key] = save_path
+            self.save_paths_to_config()
 
 
 class YoutubeDownloaderController:

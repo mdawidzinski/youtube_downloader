@@ -1,19 +1,20 @@
 import os
 from pytube import YouTube
 import ffmpeg as ff
-import os.path as mypath  # allows work with path, allias dodałem żeby było łatwiej
+import os.path as mypath  # allows work with path, allias dodałem, żeby było mi się łatwiej połapać
 # TODO super długie nazwy plików: https://www.youtube.com/watch?v=aamHoDycjro
 # TODO age restriction, https://www.youtube.com/watch?v=kgboGhzs3A4 WARNING
-# TODO plik docelowy, schemat w jsonie ?
 # TODO zapytanie o tryb administratora
+# TODO if_exist jeśli tak to i tak pobieramy bo tamten może być cięty, no chyba że mutagen zadziała
 
 class YoutubeDownloaderModel:
+    def __init__(self):
+        self.audio_folder_path = ''
+        self.video_folder_path = ''
 
     def folder_creator(self, folder_path):
-        # tymczasowo tutaj, jak ogarnę wybór ścieżki przez użytkownika poleci do kontrolera
         if not mypath.exists(folder_path):
             os.makedirs(folder_path)
-
 
     def get_video_duration(self, url):
         yt = YouTube(url)
@@ -27,13 +28,13 @@ class YoutubeDownloaderModel:
         return yt, file_name
 
     def download_video(self, url):
-        folder_path = 'download/video'
+
         yt, file_name = self.data(url)
         video = yt.streams.get_highest_resolution()  # extract video from YouTube
 
-        self.folder_creator(folder_path)
+        self.folder_creator(self.video_folder_path)
 
-        file_name = mypath.join(folder_path, file_name)
+        file_name = mypath.join(self.video_folder_path, file_name)
         video.download(filename=file_name)  # download video
 
         return file_name
@@ -48,12 +49,11 @@ class YoutubeDownloaderModel:
                 return audio_stream, file_name
 
     def download_mp4(self, url):
-        folder_path = 'download/audio'
         audio_stream, file_name = self.get_highest_bitrate_audio_stream(url)
 
-        self.folder_creator(folder_path)
+        self.folder_creator(self.audio_folder_path)
 
-        file_name = mypath.join(folder_path, file_name)
+        file_name = mypath.join(self.audio_folder_path, file_name)
         audio_name = audio_stream.download(filename=file_name)
 
         return audio_name

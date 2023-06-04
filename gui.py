@@ -15,21 +15,23 @@ bg_color = '#9DF1DF'
 
 
 class DownloaderGui:
-    def __init__(self, root, controller):
+    def __init__(self, root, controller, path_controller):
         self.root = root
         self.controller = controller
+        self.path_controller = path_controller
 
         self.root.geometry('1150x650')
         self.root.title('Youtube Downloader')
+        self.root.resizable(0, 0)
 
         self.root.option_add('*Font', 'Arial 28')  # zmienia domyślną czcionkę, genialne!!
 
-        self.selected_option = StringVar()
+        self.format_type = StringVar()
         self.mp_val = StringVar()
         self.length_option = StringVar()
 
-        self.options = ['audio mp4', 'audio mp3', 'video']
-        self.selected_option.set(self.options[0])
+        self.format_options = ['audio mp4', 'audio mp3', 'video']
+        self.format_type.set(self.format_options[0])
 
         self.length_option.set('Full')
 
@@ -62,7 +64,7 @@ class DownloaderGui:
         self.type_label = Label(self.format_frame, text='Choose Format:')
         self.type_label.grid(row=0)
 
-        self.type_box = Combobox(self.format_frame, textvariable=self.selected_option, values=self.options,
+        self.type_box = Combobox(self.format_frame, textvariable=self.format_type, values=self.format_options,
                                  state='readonly')
         self.type_box.grid(row=1)
 
@@ -178,7 +180,7 @@ class DownloaderGui:
 
     def download(self):
         url = self.url_entry.get()
-        format_type = self.selected_option.get()
+        format_type = self.format_type.get()
         if self.length_option.get() == 'Part':
             hour, minute, second = self.get_start_values()
             start_time = (hour, minute, second)
@@ -187,6 +189,8 @@ class DownloaderGui:
         else:
             start_time, end_time = ('00', '00', '00'), ('00', '00', '00')
 
+        # TODO da się jakoś inaczej tą logikę ogarnąć czy może to jest ok:?
+        self.path_controller.folder_path_set()
         self.controller.download(url, format_type, start_time, end_time)
         # TODO tu dołożyć dodanie do listy
 
@@ -211,3 +215,29 @@ class DownloaderGui:
             for i in self.color_exception:
                 if i != self.url_entry:
                     i.configure(state=NORMAL, bg='white')
+
+class SettingsMenu:
+    def __init__(self, root, path_controller):
+        self.root = root
+        self.path_controller = path_controller
+        self.root.option_add('*Font', 'Arial 12')
+
+        self.menu_bar = Menu(self.root)
+        self.root.config(menu=self.menu_bar)
+
+        self.settings_menu = Menu(self.menu_bar, tearoff=False)
+        self.menu_bar.add_cascade(menu=self.settings_menu, label='Menu')
+
+        self.path_menu = Menu(self.settings_menu, tearoff=False)
+        self.path_menu.add_command(label='audio', command=self.select_audio_path)
+        self.path_menu.add_command(label='video', command=self.select_video_path)
+
+        self.settings_menu.add_cascade(label='path', menu=self.path_menu)
+        self.settings_menu.add_separator()
+        self.settings_menu.add_command(label='Exit', command=root.destroy)
+
+    def select_audio_path(self):
+        self.path_controller.select_save_path('audio')
+
+    def select_video_path(self):
+        self.path_controller.select_save_path('video')

@@ -109,8 +109,8 @@ class DownloaderGui:
 
         self.set_widget_style(self.root, bg_color)
 
-    def set_widget_style(self, widget, bg_color):
-        widget.configure(background=bg_color)
+    def set_widget_style(self, widget, background_color):
+        widget.configure(background=background_color)
 
         if isinstance(widget, Frame):
             for child in widget.winfo_children():

@@ -2,6 +2,8 @@ import os
 from pytube import YouTube
 import ffmpeg as ff
 import os.path as mypath  # allows work with path, allias dodałem, żeby było mi się łatwiej połapać
+
+
 # TODO super długie nazwy plików: https://www.youtube.com/watch?v=aamHoDycjro
 # TODO age restriction, https://www.youtube.com/watch?v=kgboGhzs3A4 WARNING
 # TODO zapytanie o tryb administratora

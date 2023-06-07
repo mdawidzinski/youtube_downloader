@@ -1,16 +1,6 @@
 from tkinter import *
 from tkinter.ttk import Combobox
-from tkinter import colorchooser
 
-# TODO cudzysłowy
-# TODO bordery
-# TODO ostatnie 10 wpisanych url, przykład w test.py, po kliknięciu DOWNLOAD dodanie do listy,
-#  if > 10 ostatnie kasowane
-# TODO in progres...
-# TODO if count(-) > 1 przy bardziej złożonych nazwach plików do obserwacji
-# TODO schemat grafiki, json. kontroler czy osobne cudo?
-# TODO invalid link WARNING
-# TODO controler grafiki, clasa
 bg_color = '#9DF1DF'
 
 
@@ -24,7 +14,7 @@ class DownloaderGui:
         self.root.title('Youtube Downloader')
         self.root.resizable(0, 0)
 
-        self.root.option_add('*Font', 'Arial 28')  # zmienia domyślną czcionkę, genialne!!
+        self.root.option_add('*Font', 'Arial 28')
 
         self.format_type = StringVar()
         self.mp_val = StringVar()
@@ -42,18 +32,21 @@ class DownloaderGui:
         self.end_minute = StringVar(value='00')
         self.end_second = StringVar(value='00')
 
-        self.main_frame = Frame(self.root)  # TODO dołożyć historie
+        self.main_frame = Frame(self.root)
         self.main_frame.pack(fill='x')
 
         for i in range(4):
             self.main_frame.grid_columnconfigure(i, weight=1)
 
         self.info_label = Label(self.main_frame, text='Youtube url:')
-        self.info_label.grid(row=0, column=1)
+        self.info_label.grid(row=0, column=0)
 
         self.url_entry = Entry(self.main_frame)
-        self.url_entry.grid(row=0, column=2, columnspan=3, sticky='NSWE')
+        self.url_entry.grid(row=0, column=1, columnspan=3, sticky='NSWE')
         self.url_entry.bind("<KeyRelease>", self.check_entry)
+
+        self.clear_url_button = Button(self.main_frame, text='clear', command=self.clear_url_entry)
+        self.clear_url_button.grid(row=0, column=5)
 
         self.settings_frame = Frame(self.root)
         self.settings_frame.pack()
@@ -84,7 +77,7 @@ class DownloaderGui:
 
         self.start_label = Label(self.length_frame, text="Start Time:")
         self.start_label.grid(row=3, columnspan=3, sticky='E')
-        # TODO da się łatwiej?:
+
         self.start_hour_entry, self.start_minute_entry, self.start_second_entry = self.create_time_entries(
             self.length_frame, row=4, textvariable=(self.start_hour, self.start_minute, self.start_second))
 
@@ -99,7 +92,7 @@ class DownloaderGui:
 
         self.bottom_frame = Frame(self.root)
         self.bottom_frame.pack()
-        # TODO do modyfikacji:
+
         self.download_button = Button(self.bottom_frame, text='Download', state=DISABLED,
                                       command=self.download)
         self.download_button.grid(row=0, column=1)
@@ -114,7 +107,7 @@ class DownloaderGui:
 
         if isinstance(widget, Frame):
             for child in widget.winfo_children():
-                if child not in self.color_exception:  # TODO próbowałem to jakość z instancjami ogarnąć, ale się nie da jakaś myśl?
+                if child not in self.color_exception:
                     self.set_widget_style(child, bg_color)
         else:
             for child in widget.winfo_children():
@@ -162,12 +155,13 @@ class DownloaderGui:
 
     def clear_entry(self, event):
         entry = event.widget
-        entry.delete(0, END)
+        if entry.get() == '00':
+            entry.delete(0, END)
 
     def fill_entry(self, event):
         entry = event.widget
         if not entry.get():
-            entry.insert(END, "00")
+            entry.insert(END, '00')
 
     def validate_time_entry(self, value):
         if value == '':
@@ -175,8 +169,7 @@ class DownloaderGui:
         if value.isdigit():
             time = int(value)
             return 0 <= time < 60
-        else:
-            return False
+        return False
 
     def download(self):
         url = self.url_entry.get()
@@ -189,10 +182,8 @@ class DownloaderGui:
         else:
             start_time, end_time = ('00', '00', '00'), ('00', '00', '00')
 
-        # TODO da się jakoś inaczej tą logikę ogarnąć czy może to jest ok:?
         self.path_controller.folder_path_set()
         self.controller.download(url, format_type, start_time, end_time)
-        # TODO tu dołożyć dodanie do listy
 
     def get_start_values(self):
         hour = self.start_hour_entry.get() or '00'
@@ -215,6 +206,11 @@ class DownloaderGui:
             for i in self.color_exception:
                 if i != self.url_entry:
                     i.configure(state=NORMAL, bg='white')
+
+    def clear_url_entry(self):
+        self.url_entry.delete(0, END)
+        self.download_button.config(state=DISABLED)
+
 
 class SettingsMenu:
     def __init__(self, root, path_controller):

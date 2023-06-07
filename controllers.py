@@ -1,8 +1,9 @@
 from tkinter import messagebox
 from tkinter import filedialog
-import json
+from utils import config_utils
 
-CONFIG_FILE = 'config.json'  # TODO gdzie to upchnąć?
+
+CONFIG_FILE = 'configs/config.json'
 
 
 class PathController:
@@ -13,7 +14,7 @@ class PathController:
             'audio': 'download/audio',
             'video': 'download/video'
         }
-        self.file_paths = self.load_paths_from_config()
+        self.file_paths = config_utils.load_data_from_json(CONFIG_FILE)
 
         for key, value in self.default_file_paths.items():
             if key in self.file_paths:
@@ -21,21 +22,10 @@ class PathController:
             else:
                 self.file_paths[key] = value
 
-        self.save_paths_to_config()
-
-    def save_paths_to_config(self):
-        with open(CONFIG_FILE, 'w') as file:
-            json.dump(self.file_paths, file)
-
-    def load_paths_from_config(self):
-        try:
-            with open(CONFIG_FILE, 'r') as file:
-                return json.load(file)
-        except (FileNotFoundError, json.JSONDecodeError):
-            return {}
+        config_utils.save_data_to_json(self.file_paths, CONFIG_FILE)
 
     def folder_path_set(self):
-        path_dict = self.load_paths_from_config()
+        path_dict = config_utils.load_data_from_json(CONFIG_FILE)
         for key, value in path_dict.items():
             if key == 'video':
                 self.model.video_folder_path = value
@@ -43,11 +33,11 @@ class PathController:
                 self.model.audio_folder_path = value
 
     def select_save_path(self, file_key):
-        initial_dir = self.file_paths.get(file_key, None)  # Pobranie obecnej ścieżki jako initialdir
+        initial_dir = self.file_paths.get(file_key, None)
         save_path = filedialog.askdirectory(initialdir=initial_dir)
         if save_path:
             self.file_paths[file_key] = save_path
-            self.save_paths_to_config()
+            config_utils.save_data_to_json(self.file_paths, CONFIG_FILE)
 
 
 class YoutubeDownloaderController:
@@ -72,9 +62,9 @@ class YoutubeDownloaderController:
 
         file_name = ''
         if video:
-            file_name = self.model.download_video(url)  # ściąga video
+            file_name = self.model.download_video(url)
             if split:
-                self.model.cut_file(file_name, start_time, end_time)  # tnie pobrany plik, zostawia ucięty i kasuje cały
+                self.model.cut_file(file_name, start_time, end_time)
         else:
             file_name = self.model.download_mp4(url)
             if mp3:
@@ -99,15 +89,15 @@ class YoutubeDownloaderController:
         if start_time >= duration:
             messagebox.showwarning('Warning', 'start_time >= duration')
             return 'Time Error', 'Time Error'
-        if end_time >= duration:  # TODO zapytanie czy end = duration
+        if end_time >= duration:
             messagebox.showwarning('Warning', 'end_time >= duration')
             return 'Time Error', 'Time Error'
 
         return self.time_convert(s_time, e_time)
 
     def time_convert(self, s_time, e_time):
-        start_time = None
-        end_time = None
+        start_time = '00:00:00'
+        end_time = '00:00:00'
         if s_time != ('00', '00', '00'):
             start_time = '%s:%s:%s' % (s_time[0], s_time[1], s_time[2])
         if e_time != ('00', '00', '00'):

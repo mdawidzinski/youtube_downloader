@@ -1,27 +1,22 @@
 import os
 from pytube import YouTube
 import ffmpeg as ff
-import os.path as mypath  # allows work with path, allias dodałem, żeby było mi się łatwiej połapać
-# TODO super długie nazwy plików: https://www.youtube.com/watch?v=aamHoDycjro
-# TODO age restriction, https://www.youtube.com/watch?v=kgboGhzs3A4 WARNING
-# TODO zapytanie o tryb administratora
-# TODO if_exist jeśli tak to i tak pobieramy bo tamten może być cięty, no chyba że mutagen zadziała
+import os.path as mypath  # allows work with path
+from utils import config_utils
+from tkinter import messagebox
+
 
 class YoutubeDownloaderModel:
     def __init__(self):
         self.audio_folder_path = ''
         self.video_folder_path = ''
 
-    def folder_creator(self, folder_path):
-        if not mypath.exists(folder_path):
-            os.makedirs(folder_path)
-
     def get_video_duration(self, url):
         yt = YouTube(url)
         duration = int(yt.length)
         return duration
 
-    def data(self, url):  # TODO dużo tego url
+    def data(self, url):
         yt = YouTube(url)
         title, autor = yt.title, yt.author  # extract title and autor
         file_name = f'{autor} - {title}.mp4'
@@ -32,7 +27,9 @@ class YoutubeDownloaderModel:
         yt, file_name = self.data(url)
         video = yt.streams.get_highest_resolution()  # extract video from YouTube
 
-        self.folder_creator(self.video_folder_path)
+        folder_creation = config_utils.create_folder(self.video_folder_path)
+        if folder_creation is not None:
+            messagebox.showerror(folder_creation)
 
         file_name = mypath.join(self.video_folder_path, file_name)
         video.download(filename=file_name)  # download video
@@ -51,7 +48,9 @@ class YoutubeDownloaderModel:
     def download_mp4(self, url):
         audio_stream, file_name = self.get_highest_bitrate_audio_stream(url)
 
-        self.folder_creator(self.audio_folder_path)
+        folder_creation = config_utils.create_folder(self.video_folder_path)
+        if folder_creation is not None:
+            messagebox.showerror(folder_creation)
 
         file_name = mypath.join(self.audio_folder_path, file_name)
         audio_name = audio_stream.download(filename=file_name)
@@ -71,10 +70,8 @@ class YoutubeDownloaderModel:
     def cut_file(self, input_filename, start_time, end_time):
         base = input_filename
         output_filename = 'temp.mp4'
-        if end_time is None:
-            ff.input(input_filename).output(output_filename, ss=start_time, acodec='copy').run()
-        else:
-            ff.input(input_filename).output(output_filename, ss=start_time, to=end_time, acodec='copy').run()
+
+        ff.input(input_filename).output(output_filename, ss=start_time, to=end_time, acodec='copy').run()
 
         os.remove(input_filename)
         os.rename(output_filename, base)

@@ -11,8 +11,15 @@ def load_data_from_json(json_file):
 
 
 def save_data_to_json(data, json_file):
-    with open(json_file, 'w') as file:
-        json.dump(data, file)
+    try:
+        with open(json_file, 'w') as file:
+            json.dump(data, file)
+    except PermissionError:
+        return f'Lack of permission to save the file'
+    except TypeError:
+        return f'Cannot convert data to json format'
+    except Exception as e:
+        return f'Error occurred: {str(e)}'
 
 
 def create_folder(folder_path):

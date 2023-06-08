@@ -97,7 +97,7 @@ class YoutubeDownloaderController:
 
     def time_convert(self, s_time, e_time):
         start_time = '00:00:00'
-        end_time = '00:00:00'
+        end_time = None
         if s_time != ('00', '00', '00'):
             start_time = '%s:%s:%s' % (s_time[0], s_time[1], s_time[2])
         if e_time != ('00', '00', '00'):

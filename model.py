@@ -6,6 +6,7 @@ from utils import config_utils
 from tkinter import messagebox
 
 
+# TODO problem z zerami, gdzie dodajemy błędy?
 class YoutubeDownloaderModel:
     def __init__(self):
         self.audio_folder_path = ''
@@ -70,8 +71,11 @@ class YoutubeDownloaderModel:
     def cut_file(self, input_filename, start_time, end_time):
         base = input_filename
         output_filename = 'temp.mp4'
-
-        ff.input(input_filename).output(output_filename, ss=start_time, to=end_time, acodec='copy').run()
+        print(end_time, start_time)
+        if end_time is None:
+            ff.input(input_filename).output(output_filename, ss=start_time, acodec='copy').run()
+        else:
+            ff.input(input_filename).output(output_filename, ss=start_time, to=end_time, acodec='copy').run()
 
         os.remove(input_filename)
         os.rename(output_filename, base)

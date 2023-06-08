@@ -37,5 +37,7 @@ def create_folder(folder_path):
     try:
         if not os.path.exists(folder_path):
             os.makedirs(folder_path)
-    except OSError as e:
-        return f"Nie można utworzyć folderu: {folder_path}. Błąd: {str(e)}"
+    except PermissionError:
+        return f'Lack of permission to create folder'
+    except Exception as e:
+        return f'Error occurred:{str(e)}'

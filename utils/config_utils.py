@@ -2,12 +2,23 @@ import json
 import os
 
 
+# Podawać nazwy plików, których dotyczy błąd?
 def load_data_from_json(json_file):
     try:
         with open(json_file, 'r') as file:
             return json.load(file)
-    except (FileNotFoundError, json.JSONDecodeError):
+    except FileNotFoundError:
         return {}
+    except json.JSONDecodeError:
+        return f'Cannot decode json file'
+    except PermissionError:
+        return f'No permission to load file'
+    except IsADirectoryError:
+        return f'{json_file} is a directory, not a file'
+    except UnicodeDecodeError:
+        return f'Error decoding {json_file}: invalid encoding'
+    except Exception as e:
+        return f'Error occurred: {str(e)}'
 
 
 def save_data_to_json(data, json_file):

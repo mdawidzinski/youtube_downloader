@@ -95,7 +95,8 @@ class YoutubeDownloaderController:
 
         return self.time_convert(s_time, e_time)
 
-    def time_convert(self, s_time, e_time):
+    @staticmethod
+    def time_convert(s_time, e_time):
         start_time = '00:00:00'
         end_time = None
         if s_time != ('00', '00', '00'):
@@ -104,5 +105,6 @@ class YoutubeDownloaderController:
             end_time = '%s:%s:%s' % (e_time[0], e_time[1], e_time[2])
         return start_time, end_time
 
-    def task_done(self, filename):
+    @staticmethod
+    def task_done(filename):
         messagebox.showinfo('Download Complete', 'File downloaded: %s' % filename)

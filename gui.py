@@ -1,6 +1,9 @@
 from tkinter import *
 from tkinter.ttk import Combobox
 
+
+# TODO in progres.. progress bar
+# TODO invalid link WARNING
 bg_color = '#9DF1DF'
 
 # TODO cleary dla time entry
@@ -14,7 +17,7 @@ class DownloaderGui:
         self.root.title('Youtube Downloader')
         self.root.resizable(0, 0)
 
-        self.root.option_add('*Font', 'Arial 28')
+        self.root.option_add('*Font', 'Arial 28')  # set default font
 
         self.format_type = StringVar()
         self.mp_val = StringVar()

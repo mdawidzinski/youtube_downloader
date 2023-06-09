@@ -3,7 +3,7 @@ from tkinter.ttk import Combobox
 
 bg_color = '#9DF1DF'
 
-
+# TODO cleary dla time entry
 class DownloaderGui:
     def __init__(self, root, controller, path_controller):
         self.root = root

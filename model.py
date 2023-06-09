@@ -6,18 +6,19 @@ from utils import config_utils
 from tkinter import messagebox
 
 
-# TODO problem z zerami, gdzie dodajemy błędy?
 class YoutubeDownloaderModel:
     def __init__(self):
         self.audio_folder_path = ''
         self.video_folder_path = ''
 
-    def get_video_duration(self, url):
+    @staticmethod
+    def get_video_duration(url):
         yt = YouTube(url)
         duration = int(yt.length)
         return duration
 
-    def data(self, url):
+    @staticmethod
+    def data(url):
         yt = YouTube(url)
         title, autor = yt.title, yt.author  # extract title and autor
         file_name = f'{autor} - {title}.mp4'
@@ -58,7 +59,8 @@ class YoutubeDownloaderModel:
 
         return audio_name
 
-    def convert_to_mp3(self, audio_filename):
+    @staticmethod
+    def convert_to_mp3(audio_filename):
         audio_file_mp3 = audio_filename[:-4] + '.mp3'
         (
             ff.input(audio_filename)
@@ -68,7 +70,8 @@ class YoutubeDownloaderModel:
         os.remove(audio_filename)
         return audio_file_mp3
 
-    def cut_file(self, input_filename, start_time, end_time):
+    @staticmethod
+    def cut_file(input_filename, start_time, end_time):
         base = input_filename
         output_filename = 'temp.mp4'
         print(end_time, start_time)

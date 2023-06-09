@@ -153,17 +153,20 @@ class DownloaderGui:
         else:
             self.download_button.config(state=DISABLED)
 
-    def clear_entry(self, event):
+    @staticmethod
+    def clear_entry(event):
         entry = event.widget
         if entry.get() == '00':
             entry.delete(0, END)
 
-    def fill_entry(self, event):
+    @staticmethod
+    def fill_entry(event):
         entry = event.widget
         if not entry.get():
             entry.insert(END, '00')
 
-    def validate_time_entry(self, value):
+    @staticmethod
+    def validate_time_entry(value):
         if value == '':
             return True
         if value.isdigit():

@@ -5,6 +5,7 @@ import os.path as mypath  # allows work with path
 from utils import config_utils
 from tkinter import messagebox
 
+# TODO super długie nazwy plików: https://www.youtube.com/watch?v=aamHoDycjro
 
 class YoutubeDownloaderModel:
     def __init__(self):
@@ -23,7 +24,7 @@ class YoutubeDownloaderModel:
     @staticmethod
     def data(url):
         yt = YouTube(url)  # TODO to się powtarza i try/except
-        title, autor = yt.title, yt.author  # extract title and autor
+        title, autor = yt.title, yt.author  # extract title and author
         file_name = f'{autor} - {title}.mp4'
         return yt, file_name
 

@@ -13,8 +13,6 @@ def load_data_from_json(json_file):
         return f'Cannot decode json file'
     except PermissionError:
         return f'No permission to load file'
-    except IsADirectoryError:
-        return f'{json_file} is a directory, not a file'
     except UnicodeDecodeError:
         return f'Error decoding {json_file}: invalid encoding'
     except Exception as e:

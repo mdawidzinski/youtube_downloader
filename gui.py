@@ -178,6 +178,9 @@ class DownloaderGui:
         return False
 
     def download(self):
+        self.download_button.configure(text='Downloading...')
+        self.download_button.update_idletasks()  # refresh app allows change text
+
         url = self.url_entry.get()
         format_type = self.format_type.get()
         if self.length_option.get() == 'Part':
@@ -190,6 +193,7 @@ class DownloaderGui:
 
         self.path_controller.folder_path_set()
         self.controller.download(url, format_type, start_time, end_time)
+        self.download_button.configure(text='Download')
 
     def get_start_values(self):
         hour = self.start_hour_entry.get() or '00'

@@ -7,8 +7,9 @@ CONFIG_FILE = 'configs/config.json'
 
 
 class PathController:
-    def __init__(self, model):
+    def __init__(self, model, logger):
         self.model = model
+        self.logger = logger
 
         self.default_file_paths = {
             'audio': 'download/audio',
@@ -41,8 +42,9 @@ class PathController:
 
 
 class YoutubeDownloaderController:
-    def __init__(self, model):
+    def __init__(self, model, logger):
         self.model = model
+        self.logger = logger
 
     def download(self, url, format_type, s_time, e_time):
         video = True

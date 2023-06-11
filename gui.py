@@ -8,10 +8,11 @@ bg_color = '#9DF1DF'
 
 # TODO cleary dla time entry
 class DownloaderGui:
-    def __init__(self, root, controller, path_controller):
+    def __init__(self, root, controller, path_controller, logger):
         self.root = root
         self.controller = controller
         self.path_controller = path_controller
+        self.logger = logger
 
         self.root.geometry('1150x650')
         self.root.title('Youtube Downloader')
@@ -182,6 +183,8 @@ class DownloaderGui:
         self.download_button.update_idletasks()  # refresh app allows change text
 
         url = self.url_entry.get()
+        self.logger.debug('Start downloading: %s', url)  # dodaje zapis do logu
+
         format_type = self.format_type.get()
         if self.length_option.get() == 'Part':
             hour, minute, second = self.get_start_values()
@@ -193,6 +196,7 @@ class DownloaderGui:
 
         self.path_controller.folder_path_set()
         self.controller.download(url, format_type, start_time, end_time)
+
         self.download_button.configure(text='Download')
 
     def get_start_values(self):
@@ -223,9 +227,10 @@ class DownloaderGui:
 
 
 class SettingsMenu:
-    def __init__(self, root, path_controller):
+    def __init__(self, root, path_controller, logger):
         self.root = root
         self.path_controller = path_controller
+        self.logger = logger
         self.root.option_add('*Font', 'Arial 12')
 
         self.menu_bar = Menu(self.root)
@@ -243,7 +248,9 @@ class SettingsMenu:
         self.settings_menu.add_command(label='Exit', command=root.destroy)
 
     def select_audio_path(self):
+        self.logger.debug('Audio path clicked')
         self.path_controller.select_save_path('audio')
 
     def select_video_path(self):
+        self.logger.debug('Video path clicked')
         self.path_controller.select_save_path('video')

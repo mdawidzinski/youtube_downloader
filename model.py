@@ -8,7 +8,8 @@ from tkinter import messagebox
 # TODO super długie nazwy plików: https://www.youtube.com/watch?v=aamHoDycjro
 
 class YoutubeDownloaderModel:
-    def __init__(self):
+    def __init__(self, logger):
+        self.logger = logger
         self.audio_folder_path = ''
         self.video_folder_path = ''
 

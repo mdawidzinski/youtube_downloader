@@ -1,3 +1,4 @@
+import os
 from tkinter import messagebox
 from tkinter import filedialog
 from utils import config_utils
@@ -15,6 +16,10 @@ class PathController:
             'audio': 'download/audio',
             'video': 'download/video'
         }
+
+        if not os.path.exists('configs'):
+            os.makedirs('configs')
+
         self.file_paths = config_utils.load_data_from_json(CONFIG_FILE)
 
         for key, value in self.default_file_paths.items():

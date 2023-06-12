@@ -55,7 +55,7 @@ class YoutubeDownloaderModel:
     def download_mp4(self, url):
         audio_stream, file_name = self.get_highest_bitrate_audio_stream(url)
 
-        folder_creation = config_utils.create_folder(self.video_folder_path)
+        folder_creation = config_utils.create_folder(self.audio_folder_path)
         if folder_creation is not None:
             messagebox.showerror(folder_creation)
 

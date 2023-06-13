@@ -39,3 +39,16 @@ def create_folder(folder_path):
         return f'Lack of permission to create folder'
     except Exception as e:
         return f'Error occurred:{str(e)}'
+
+
+def set_file_name(file_name):
+    try:
+        extension = os.path.splitext(file_name)[1]
+        basename = os.path.splitext(file_name)[0]
+        number = 1
+        while os.path.exists(f'{basename}({number}){extension}'):
+            number += 1
+        file_name = f'{basename}({number}){extension}'
+        return file_name
+    except Exception as e:
+        return f'Error occurred: {str(e)}'

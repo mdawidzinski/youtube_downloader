@@ -39,6 +39,10 @@ class YoutubeDownloaderModel:
             messagebox.showerror(folder_creation)
 
         file_name = mypath.join(self.video_folder_path, file_name)
+
+        if os.path.exists(file_name):
+            file_name = config_utils.set_file_name(file_name)
+
         video.download(filename=file_name)  # download video TODO try/except
 
         return file_name
@@ -60,19 +64,35 @@ class YoutubeDownloaderModel:
             messagebox.showerror(folder_creation)
 
         file_name = mypath.join(self.audio_folder_path, file_name)
+
+        if os.path.exists(file_name):
+            file_name = config_utils.set_file_name(file_name)
+
         audio_stream.download(filename=file_name)  # TODO try/except
 
         return file_name
 
     @staticmethod
-    def convert_to_mp3(audio_filename):  # TODO to musowo w try/except
-        audio_file_mp3 = audio_filename[:-4] + '.mp3'
+    def convert_to_mp3(audio_file_name):  # TODO to musowo w try/except
+
+        basename = os.path.splitext(audio_file_name)[0]
+        audio_file_mp3 = f'{basename}.mp3'
+
+        try:
+            if os.path.exists(audio_file_mp3):
+                number = 1
+                while os.path.exists(f'{basename}({number}).mp3'):
+                    number += 1
+                audio_file_mp3 = f'{basename}({number}).mp3'
+        except Exception as e:
+            return e
+
         (
-            ff.input(audio_filename)
+            ff.input(audio_file_name)
             .output(audio_file_mp3)
             .run()
         )
-        os.remove(audio_filename)
+        os.remove(audio_file_name)
 
         return audio_file_mp3
 

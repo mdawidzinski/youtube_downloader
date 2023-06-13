@@ -73,7 +73,7 @@ class YoutubeDownloaderModel:
         return file_name
 
     @staticmethod
-    def convert_to_mp3(audio_file_name):  # TODO to musowo w try/except
+    def convert_to_mp3(audio_file_name):
 
         basename = os.path.splitext(audio_file_name)[0]
         audio_file_mp3 = f'{basename}.mp3'
@@ -86,12 +86,15 @@ class YoutubeDownloaderModel:
                 audio_file_mp3 = f'{basename}({number}).mp3'
         except Exception as e:
             return e
+        try:
+            (
+                ff.input(audio_file_name)
+                .output(audio_file_mp3)
+                .run()
+            )
+        except Exception as e:
+            return e
 
-        (
-            ff.input(audio_file_name)
-            .output(audio_file_mp3)
-            .run()
-        )
         os.remove(audio_file_name)
 
         return audio_file_mp3

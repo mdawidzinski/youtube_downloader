@@ -78,14 +78,12 @@ class YoutubeDownloaderModel:
         basename = os.path.splitext(audio_file_name)[0]
         audio_file_mp3 = f'{basename}.mp3'
 
-        try:
-            if os.path.exists(audio_file_mp3):
-                number = 1
-                while os.path.exists(f'{basename}({number}).mp3'):
-                    number += 1
-                audio_file_mp3 = f'{basename}({number}).mp3'
-        except Exception as e:
-            return e
+        if os.path.exists(audio_file_mp3):
+            number = 1
+            while os.path.exists(f'{basename}({number}).mp3'):
+                number += 1
+            audio_file_mp3 = f'{basename}({number}).mp3'
+
         try:
             (
                 ff.input(audio_file_name)

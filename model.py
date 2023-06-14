@@ -7,30 +7,30 @@ from tkinter import messagebox
 
 # TODO super długie nazwy plików: https://www.youtube.com/watch?v=aamHoDycjro
 
+
 class YoutubeDownloaderModel:
     def __init__(self, logger):
         self.logger = logger
         self.audio_folder_path = ''
         self.video_folder_path = ''
-
+        self.temp = ''
 
     #  TODO zbiorcza funkcja dla youtuba
 
     @staticmethod
     def get_video_duration(url):
-        yt = YouTube(url)  # TODO to się powtarza i try/except
+        yt = YouTube(url)
         duration = int(yt.length)
         return duration
 
     @staticmethod
     def data(url):
-        yt = YouTube(url)  # TODO to się powtarza i try/except
+        yt = YouTube(url)
         title, autor = yt.title, yt.author  # extract title and author
         file_name = f'{autor} - {title}.mp4'
         return yt, file_name
 
-    def download_video(self, url):
-
+    def download_video(self, url, split=False):
         yt, file_name = self.data(url)
         video = yt.streams.get_highest_resolution()  # extract video from YouTube
 
@@ -38,17 +38,21 @@ class YoutubeDownloaderModel:
         if folder_creation is not None:
             messagebox.showerror(folder_creation)
 
-        file_name = mypath.join(self.video_folder_path, file_name)
+        if not split:
+            file_path_name = mypath.join(self.video_folder_path, file_name)
 
-        if os.path.exists(file_name):
-            file_name = config_utils.set_file_name(file_name)
+        else:
+            file_path_name = mypath.join(self.temp, file_name)
 
-        video.download(filename=file_name)  # download video TODO try/except
+        if os.path.exists(file_path_name):
+            file_path_name = config_utils.set_file_name(file_path_name)
 
-        return file_name
+        video.download(filename=file_path_name)  # download video TODO try/except
+
+        return file_path_name, file_name
 
     def get_highest_bitrate_audio_stream(self, url):
-        yt, file_name = self.data(url) # TODO to też w teorii się powtarza
+        yt, file_name = self.data(url)
         audio_streams = yt.streams.filter(only_audio=True)
         audio_streams = sorted(audio_streams, key=lambda stream: int(stream.abr[:-4]), reverse=True)
 
@@ -56,33 +60,39 @@ class YoutubeDownloaderModel:
             if audio_stream.mime_type == 'audio/mp4':
                 return audio_stream, file_name
 
-    def download_mp4(self, url):
+    def download_mp4(self, url, split=False):
         audio_stream, file_name = self.get_highest_bitrate_audio_stream(url)
 
         folder_creation = config_utils.create_folder(self.audio_folder_path)
+
         if folder_creation is not None:
             messagebox.showerror(folder_creation)
 
-        file_name = mypath.join(self.audio_folder_path, file_name)
+        if not split:
+            file_path_name = mypath.join(self.audio_folder_path, file_name)
+        else:
+            file_path_name = mypath.join(self.temp, file_name)
 
-        if os.path.exists(file_name):
-            file_name = config_utils.set_file_name(file_name)
+        if os.path.exists(file_path_name):
+            file_path_name = config_utils.set_file_name(file_path_name)
 
-        audio_stream.download(filename=file_name)  # TODO try/except
+        audio_stream.download(filename=file_path_name)  # TODO try/except
 
-        return file_name
+        return file_path_name, file_name
 
-    @staticmethod
-    def convert_to_mp3(audio_file_name):
+    def convert_to_mp3(self, audio_file_name, file_name, split=False):
+        base_file_name = file_name[:-4]
+        path = self.audio_folder_path
+        if split:
+            path = self.temp
 
-        basename = os.path.splitext(audio_file_name)[0]
-        audio_file_mp3 = f'{basename}.mp3'
+        audio_file_mp3 = f'{path}/{base_file_name}.mp3'
 
         if os.path.exists(audio_file_mp3):
             number = 1
-            while os.path.exists(f'{basename}({number}).mp3'):
+            while os.path.exists(f'{path}/{base_file_name}({number}).mp3'):
                 number += 1
-            audio_file_mp3 = f'{basename}({number}).mp3'
+            audio_file_mp3 = f'{path}/{base_file_name}({number}).mp3'
 
         try:
             (
@@ -94,13 +104,27 @@ class YoutubeDownloaderModel:
             return e
 
         os.remove(audio_file_name)
+        file_name = f'{base_file_name}.mp3'
 
-        return audio_file_mp3
+        return audio_file_mp3, file_name
 
-    @staticmethod
-    def cut_file(input_filename, start_time, end_time):
-        base = input_filename
-        output_filename = 'temp.mp4'
+    def cut_file(self, input_filename, file_name, start_time, end_time, video=True):
+        path = self.video_folder_path
+
+        if not video:
+            path = self.audio_folder_path
+
+        base_name = file_name[:-4]
+        extension = file_name[-4:]
+
+        output_filename = f'{path}/{base_name}{extension}'
+
+        if os.path.exists(output_filename):
+            number = 1
+            while os.path.exists(f'{path}/{base_name}({number}){extension}'):
+                number += 1
+            output_filename = f'{path}/{base_name}({number}){extension}'
+
         # TODO jeden try/except
         if end_time is None:
             ff.input(input_filename).output(output_filename, ss=start_time, acodec='copy').run()
@@ -108,4 +132,5 @@ class YoutubeDownloaderModel:
             ff.input(input_filename).output(output_filename, ss=start_time, to=end_time, acodec='copy').run()
         # TODO drugi
         os.remove(input_filename)
-        os.rename(output_filename, base)
+
+        return output_filename

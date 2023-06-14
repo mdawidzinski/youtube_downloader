@@ -11,6 +11,8 @@ class PathController:
     def __init__(self, model, logger):
         self.model = model
         self.logger = logger
+        self.temp_folder = 'temp'  # można też z automatu  tempfile.mkdtemp()
+        self.model.temp = self.temp_folder
 
         self.default_file_paths = {
             'audio': 'download/audio',
@@ -29,6 +31,9 @@ class PathController:
                 self.file_paths[key] = value
 
         config_utils.save_data_to_json(self.file_paths, CONFIG_FILE)
+
+        if not os.path.exists(self.temp_folder):
+            os.makedirs(self.temp_folder)
 
     def folder_path_set(self):
         path_dict = config_utils.load_data_from_json(CONFIG_FILE)
@@ -67,22 +72,30 @@ class YoutubeDownloaderController:
         if start_time == 'Time Error':
             return
 
-        file_name = ''
         if video:
-            file_name = self.model.download_video(url)
             if split:
-                self.model.cut_file(file_name, start_time, end_time)
+                file_path_name, file_name = self.model.download_video(url, True)
+                file_path_name = self.model.cut_file(file_path_name, file_name, start_time, end_time)
+                self.task_done(file_path_name)
+                return
+            file_path_name, file_name = self.model.download_video(url)
         else:
-            file_name = self.model.download_mp4(url)
             if mp3:
-                file_name = self.model.convert_to_mp3(file_name)
+                file_path_name, file_name = self.model.download_mp4(url, True)
                 if split:
-                    self.model.cut_file(file_name, start_time, end_time)
+                    file_path_name, file_name = self.model.convert_to_mp3(file_path_name, file_name, True)
+                    file_path_name = self.model.cut_file(file_path_name, file_name, start_time, end_time, False)
+                    self.task_done(file_path_name)
+                    return
+                file_path_name, file_name = self.model.convert_to_mp3(file_path_name, file_name)
             else:
                 if split:
-                    self.model.cut_file(file_name, start_time, end_time)
-
-        self.task_done(file_name)
+                    file_path_name, file_name = self.model.download_mp4(url, True)
+                    file_path_name = self.model.cut_file(file_path_name, file_name, start_time, end_time, False)
+                    self.task_done(file_path_name)
+                    return
+                file_path_name, file_name = self.model.download_mp4(url)
+        self.task_done(file_path_name)
 
     def time_check(self, url, s_time, e_time):
         start_time = sum(int(t) * 60 ** i for i, t in enumerate(s_time[::-1]))

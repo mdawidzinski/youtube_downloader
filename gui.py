@@ -1,10 +1,10 @@
 from tkinter import *
 from tkinter.ttk import Combobox
 
-
 # TODO in progres.. progress bar
 # TODO invalid link WARNING
 bg_color = '#9DF1DF'
+
 
 # TODO cleary dla time entry
 class DownloaderGui:
@@ -89,7 +89,11 @@ class DownloaderGui:
         self.end_label.grid(row=5)
 
         self.end_hour_entry, self.end_minute_entry, self.end_second_entry = self.create_time_entries(self.length_frame,
-                                    row=6, textvariable=(self.end_hour, self.end_minute, self.end_second))
+                                                                                                     row=6,
+                                                                                                     textvariable=(
+                                                                                                     self.end_hour,
+                                                                                                     self.end_minute,
+                                                                                                     self.end_second))
 
         self.destination_frame = Frame(self.settings_frame)
         self.destination_frame.pack()
@@ -133,7 +137,7 @@ class DownloaderGui:
         minute_label.grid(row=row, column=2)
 
         minute_entry = Entry(frame, width=2, validate="key", textvariable=textvariable[1],
-                             validatecommand=(self.root.register(self.validate_time_entry), "%P"), state=DISABLED,)
+                             validatecommand=(self.root.register(self.validate_time_entry), "%P"), state=DISABLED, )
         minute_entry.grid(row=row, column=3)
         minute_entry.insert(END, "00")
         minute_entry.bind("<FocusIn>", self.clear_entry)

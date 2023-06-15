@@ -5,6 +5,7 @@ import os.path as mypath  # allows work with path
 from utils import config_utils
 from tkinter import messagebox
 
+
 # TODO super długie nazwy plików: https://www.youtube.com/watch?v=aamHoDycjro
 
 
@@ -108,6 +109,13 @@ class YoutubeDownloaderModel:
 
         return audio_file_mp3, file_name
 
+    def push_error(self, method_name: str, message: str, msg_param: str, title: str):
+        """ Concatenates given params into log entry and shown msgbox with error. """
+        error_msg = f'{message}: {msg_param}'
+        log_entry = f'[model][{method_name}] {error_msg}'
+        self.logger.error(log_entry)
+        messagebox.showerror(title, error_msg)
+
     def cut_file(self, input_filename, file_name, start_time, end_time, video=True):
         path = self.video_folder_path
 
@@ -125,12 +133,33 @@ class YoutubeDownloaderModel:
                 number += 1
             output_filename = f'{path}/{base_name}({number}){extension}'
 
-        # TODO jeden try/except
-        if end_time is None:
-            ff.input(input_filename).output(output_filename, ss=start_time, acodec='copy').run()
+        try:
+            if end_time is None:
+                ff.input(input_filename).output(output_filename, ss=start_time, acodec='copy').run()
+            else:
+                ff.input(input_filename).output(output_filename, ss=start_time, to=end_time, acodec='copy').run()
+        except ValueError:
+            self.push_error('cut_file', 'File name was wrong', input_filename, 'Error in processing')
+            return None
+        except FileNotFoundError:
+            self.push_error('cut_file', 'Original file was not found.', '\nPossibly disruption in connection.',
+                            'Error in processing')
+            return None
+        except Exception as e:
+            self.push_error('cut_file', 'Unknown exception', str(e), 'Error in processing')
+            return None
         else:
-            ff.input(input_filename).output(output_filename, ss=start_time, to=end_time, acodec='copy').run()
-        # TODO drugi
-        os.remove(input_filename)
+            self.logger.debug(f'[model][cut_file] Successfully cut file: {input_filename}')
+
+        try:
+            os.remove(input_filename)
+        except NotImplementedError:
+            self.push_error('cut_file', 'Removing files is unavailable in this OS', '', 'Limited OS')
+            return None
+        except Exception as e:
+            self.push_error('cut_file', 'Unknown exception', f'{str(e)}', 'Error in processing')
+            return None
+        else:
+            self.logger.debug(f'[model][cut_file] Successfully cut file: {input_filename}')
 
         return output_filename

@@ -134,4 +134,7 @@ class YoutubeDownloaderController:
 
     @staticmethod
     def task_done(filename):
-        messagebox.showinfo('Download Complete', 'File downloaded: %s' % filename)
+        if filename is None:
+            messagebox.showerror('Download Incomplete', 'Could not download pointed file with given parameters.')
+        else:
+            messagebox.showinfo('Download Complete', 'File downloaded: %s' % filename)

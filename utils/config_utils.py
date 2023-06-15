@@ -41,6 +41,16 @@ def create_folder(folder_path):
         return f'Error occurred:{str(e)}'
 
 
+def remove_folder(folder_path: str):
+    """ Removes pointed folder with relative reference from project's root. """
+    try:
+        os.rmdir(folder_path)
+    except PermissionError:
+        return f'Lack of permission to remove folder'
+    except Exception as e:
+        return f'Error occurred:{str(e)}'
+
+
 def set_file_name(file_name):
     try:
         extension = os.path.splitext(file_name)[1]

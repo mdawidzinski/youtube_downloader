@@ -1,8 +1,11 @@
 import os
 import json
 import pytest
-from utils.config_utils import load_data_from_json, save_data_to_json, create_folder
-# TODO skrypt do testowania power shell ew. bash
+from utils.config_utils import load_data_from_json, save_data_to_json, create_folder, remove_folder
+from time import gmtime, strftime
+
+
+# TODO Add OS Script to call unit tests in PowerShell and/or Bash
 # creating a valid temporary json file using pytest
 @pytest.fixture
 def valid_json_file(tmpdir):
@@ -11,6 +14,7 @@ def valid_json_file(tmpdir):
     with open(file_path, 'w') as file:
         json.dump(data, file)
     return str(file_path)
+
 
 # creating an invalid json temporary file using pytest
 @pytest.fixture
@@ -44,8 +48,15 @@ def test_save_data_to_json(tmpdir):
 
 
 def test_create_folder_success():
-    # testing PermissionError
-    folder_path = '../../restricted file/a'
-    result = create_folder(folder_path)
-    assert result == 'Lack of permission to create folder'
+    """ Testing PermissionError on creating folder as application must be able to create folders."""
+    # Given
+    folder_path = 'temp_' + strftime("%Y%m%d%H%M%S", gmtime())
 
+    # When
+    result = create_folder(folder_path)
+    # Clear after tests - results is already known
+    remove_result = remove_folder(folder_path)
+
+    # Then
+    assert result != 'Lack of permission to create folder'
+    assert remove_result is None

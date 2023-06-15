@@ -1,6 +1,6 @@
 
 
-def check_url_invalidity(url: str):
+def check_url_invalidity(url: str) -> (str, str):
     # Check given url for any content and length of the content
     if url is None:
         return 'Invalid link', 'Cannot continue with empty link.\nPlease, provide a valid link.'

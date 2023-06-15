@@ -21,6 +21,6 @@ jobs:
           python -m pip install --upgrade pip
           pip install nose2
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-      - name: Test with Nose2
+      - name: Test with Nose2 with coverage
         run: |
-          nose2 -v
+          nose2 -v --with-coverage

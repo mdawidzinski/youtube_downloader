@@ -220,11 +220,11 @@ class DownloaderGui:
         if self.length_option.get() == 'Full':
             for i in self.color_exception:
                 if i != self.url_entry:
-                    i.configure(state=DISABLED, bg='black')
+                    i.configure(state=DISABLED)
         else:
             for i in self.color_exception:
                 if i != self.url_entry:
-                    i.configure(state=NORMAL, bg='white')
+                    i.configure(state=NORMAL)
 
     def clear_url_entry(self):
         self.url_entry.delete(0, END)

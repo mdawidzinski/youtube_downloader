@@ -85,11 +85,19 @@ class DownloaderGui:
         self.start_hour_entry, self.start_minute_entry, self.start_second_entry = self.create_time_entries(
             self.length_frame, row=4, textvariable=(self.start_hour, self.start_minute, self.start_second))
 
+        self.clear_start_entry = Button(self.length_frame, text='clear', borderwidth=0,
+                                        command=lambda: self.clear_time_entry('start'))
+        self.clear_start_entry.grid(row=4, column=6)
+
         self.end_label = Label(self.length_frame, text="End Time:")
         self.end_label.grid(row=5)
 
         self.end_hour_entry, self.end_minute_entry, self.end_second_entry = self.create_time_entries(self.length_frame,
                                     row=6, textvariable=(self.end_hour, self.end_minute, self.end_second))
+
+        self.clear_end_entry = Button(self.length_frame, text='clear', borderwidth=0,
+                                      command=lambda: self.clear_time_entry('end'))
+        self.clear_end_entry.grid(row=6, column=6)
 
         self.destination_frame = Frame(self.settings_frame)
         self.destination_frame.pack()
@@ -224,6 +232,22 @@ class DownloaderGui:
     def clear_url_entry(self):
         self.url_entry.delete(0, END)
         self.download_button.config(state=DISABLED)
+
+    def clear_time_entry(self, time_entry):
+        if time_entry == 'start':
+            self.start_hour_entry.delete(0, END)
+            self.start_hour_entry.insert(END, '00')
+            self.start_minute_entry.delete(0, END)
+            self.start_minute_entry.insert(END, '00')
+            self.start_second_entry.delete(0, END)
+            self.start_second_entry.insert(END, '00')
+        else:
+            self.end_hour_entry.delete(0, END)
+            self.end_hour_entry.insert(END, '00')
+            self.end_minute_entry.delete(0, END)
+            self.end_minute_entry.insert(END, '00')
+            self.end_second_entry.delete(0, END)
+            self.end_second_entry.insert(END, '00')
 
 
 class SettingsMenu:

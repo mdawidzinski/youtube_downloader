@@ -1,12 +1,15 @@
 from tkinter import *
+from tkinter import messagebox
 from tkinter.ttk import Combobox
-
+from utils import url_utils
 
 # TODO in progres.. progress bar
 # TODO invalid link WARNING
 bg_color = '#9DF1DF'
 
+
 # TODO cleary dla time entry
+
 class DownloaderGui:
     def __init__(self, root, controller, path_controller, logger):
         self.root = root
@@ -106,17 +109,17 @@ class DownloaderGui:
 
         self.set_widget_style(self.root, bg_color)
 
-    def set_widget_style(self, widget, bg_color):
-        widget.configure(background=bg_color)
+    def set_widget_style(self, widget, background_color):
+        widget.configure(background=background_color)
 
         if isinstance(widget, Frame):
             for child in widget.winfo_children():
                 if child not in self.color_exception:
-                    self.set_widget_style(child, bg_color)
+                    self.set_widget_style(child, background_color)
         else:
             for child in widget.winfo_children():
                 if isinstance(child, Frame):
-                    self.set_widget_style(child, bg_color)
+                    self.set_widget_style(child, background_color)
 
     def create_time_entries(self, frame, row, textvariable):
         hour_label = Label(frame, text='HH:')
@@ -133,7 +136,7 @@ class DownloaderGui:
         minute_label.grid(row=row, column=2)
 
         minute_entry = Entry(frame, width=2, validate="key", textvariable=textvariable[1],
-                             validatecommand=(self.root.register(self.validate_time_entry), "%P"), state=DISABLED,)
+                             validatecommand=(self.root.register(self.validate_time_entry), "%P"), state=DISABLED, )
         minute_entry.grid(row=row, column=3)
         minute_entry.insert(END, "00")
         minute_entry.bind("<FocusIn>", self.clear_entry)
@@ -179,10 +182,16 @@ class DownloaderGui:
         return False
 
     def download(self):
+        # Validation phase of YT link
+        url = self.url_entry.get()
+        warn_title, warn_message = url_utils.check_url_invalidity(url)
+        if warn_title is not None and warn_message is not None:
+            messagebox.showwarning(warn_title, warn_message)
+            return
+
         self.download_button.configure(text='Downloading...')
         self.download_button.update_idletasks()  # refresh app allows change text
 
-        url = self.url_entry.get()
         self.logger.debug('Start downloading: %s', url)  # dodaje zapis do logu
 
         format_type = self.format_type.get()

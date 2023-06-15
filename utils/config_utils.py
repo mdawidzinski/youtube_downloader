@@ -1,6 +1,6 @@
 import json
 import os
-
+import datetime
 
 # Podawać nazwy plików, których dotyczy błąd?
 def load_data_from_json(json_file):
@@ -52,3 +52,9 @@ def set_file_name(file_name):
         return file_name
     except Exception as e:
         return f'Error occurred: {str(e)}'
+
+
+def convert_time_int_to_string(seconds: int) -> str:
+    time = datetime.timedelta(seconds=seconds)
+    time_str = str(time)
+    return time_str

@@ -110,7 +110,14 @@ class YoutubeDownloaderController:
             messagebox.showwarning('Warning', 'start_time >= duration')
             return 'Time Error', 'Time Error'
         if end_time >= duration:
-            messagebox.showwarning('Warning', 'end_time >= duration')
+            answer = messagebox.askquestion('End time extend a duration', 'Set end time to a duration?')
+            if answer == 'yes':
+                e_time = config_utils.convert_time_int_to_string(duration)
+                e_time = e_time.split(':')
+
+                return self.time_convert(s_time, e_time)
+            else:
+                messagebox.showinfo('Task aborted', 'End time should be shorter than a file duration')
             return 'Time Error', 'Time Error'
 
         return self.time_convert(s_time, e_time)

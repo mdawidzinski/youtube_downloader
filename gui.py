@@ -99,9 +99,6 @@ class DownloaderGui:
                                       command=lambda: self.clear_time_entry('end'))
         self.clear_end_entry.grid(row=6, column=6)
 
-        self.destination_frame = Frame(self.settings_frame)
-        self.destination_frame.pack()
-
         self.bottom_frame = Frame(self.root)
         self.bottom_frame.pack()
 

@@ -173,7 +173,7 @@ class DownloaderGui:
     def validate_time_entry(value):
         if value == '':
             return True
-        if value.isdigit():
+        if value.isdigit() and len(value) <= 2:
             time = int(value)
             return 0 <= time < 60
         return False

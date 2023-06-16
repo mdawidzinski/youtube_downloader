@@ -261,10 +261,10 @@ class SettingsMenu:
         self.menu_bar.add_cascade(menu=self.settings_menu, label='Menu')
 
         self.path_menu = Menu(self.settings_menu, tearoff=False)
-        self.path_menu.add_command(label='audio', command=self.select_audio_path)
-        self.path_menu.add_command(label='video', command=self.select_video_path)
+        self.path_menu.add_command(label='Audio', command=self.select_audio_path)
+        self.path_menu.add_command(label='Video', command=self.select_video_path)
 
-        self.settings_menu.add_cascade(label='path', menu=self.path_menu)
+        self.settings_menu.add_cascade(label='Destination Path:', menu=self.path_menu)
         self.settings_menu.add_separator()
         self.settings_menu.add_command(label='Exit', command=root.destroy)
 

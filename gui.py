@@ -1,9 +1,10 @@
 from tkinter import *
 from tkinter.ttk import Combobox
 from tkinter import colorchooser
+from utils.config_utils import load_data_from_json, save_data_to_json
 
 
-# TODO in progres.. progress bar
+CONFIG_FILE = 'configs/gui_config.json'
 # TODO invalid link WARNING
 
 
@@ -241,7 +242,17 @@ class SettingsMenu:
         self.path_controller = path_controller
         self.logger = logger
         self.root.option_add('*Font', 'Arial 12')
-        self.bg_color = '#9DF1DF'
+        self.bg_color = ''
+        self.default_color = {'color': '#9DF1DF'}
+
+        self.color = load_data_from_json(CONFIG_FILE)
+
+        if 'color' in self.color:
+            self.bg_color = self.color['color']
+        else:
+            self.bg_color = self.default_color['color']
+
+        save_data_to_json(self.default_color, CONFIG_FILE)
 
         self.menu_bar = Menu(self.root)
         self.root.config(menu=self.menu_bar)
@@ -286,3 +297,4 @@ class SettingsMenu:
         if color[1]:
             self.bg_color = color[1]
             self.set_widget_style(self.root, self.bg_color)
+            save_data_to_json({'color': color[1]}, CONFIG_FILE)

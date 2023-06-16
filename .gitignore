@@ -2,3 +2,4 @@
 /venv/
 /general.log
 /configs/config.json
+/configs/gui_config.json

@@ -249,6 +249,7 @@ class SettingsMenu:
 
         if 'color' in self.color:
             self.bg_color = self.color['color']
+            self.default_color['color'] = self.bg_color
         else:
             self.bg_color = self.default_color['color']
 
@@ -297,4 +298,5 @@ class SettingsMenu:
         if color[1]:
             self.bg_color = color[1]
             self.set_widget_style(self.root, self.bg_color)
-            save_data_to_json({'color': color[1]}, CONFIG_FILE)
+            self.default_color = {'color': color[1]}
+            save_data_to_json(self.default_color, CONFIG_FILE)

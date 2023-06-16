@@ -6,7 +6,7 @@ from tkinter.ttk import Combobox
 # TODO invalid link WARNING
 bg_color = '#9DF1DF'
 
-# TODO cleary dla time entry
+
 class DownloaderGui:
     def __init__(self, root, controller, path_controller, logger):
         self.root = root
@@ -109,25 +109,13 @@ class DownloaderGui:
         self.color_exception = [self.start_hour_entry, self.start_minute_entry, self.start_second_entry,
                                 self.end_hour_entry, self.end_minute_entry, self.end_second_entry, self.url_entry]
 
-        self.set_widget_style(self.root, bg_color)
 
-    def set_widget_style(self, widget, bg_color):
-        widget.configure(background=bg_color)
-
-        if isinstance(widget, Frame):
-            for child in widget.winfo_children():
-                if child not in self.color_exception:
-                    self.set_widget_style(child, bg_color)
-        else:
-            for child in widget.winfo_children():
-                if isinstance(child, Frame):
-                    self.set_widget_style(child, bg_color)
 
     def create_time_entries(self, frame, row, textvariable):
         hour_label = Label(frame, text='HH:')
         hour_label.grid(row=row, column=0)
 
-        hour_entry = Entry(frame, width=2, validate="key", state=DISABLED, bg='black', textvariable=textvariable[0],
+        hour_entry = Entry(frame, width=2, validate="key", state=DISABLED, textvariable=textvariable[0],
                            validatecommand=(self.root.register(self.validate_time_entry), "%P"))
         hour_entry.grid(row=row, column=1)
         hour_entry.insert(END, "00")
@@ -267,6 +255,20 @@ class SettingsMenu:
         self.settings_menu.add_cascade(label='Destination Path:', menu=self.path_menu)
         self.settings_menu.add_separator()
         self.settings_menu.add_command(label='Exit', command=root.destroy)
+
+        self.set_widget_style(self.root, bg_color)
+
+    def set_widget_style(self, widget, bg_color):
+        widget.configure(background=bg_color)
+
+        if isinstance(widget, Frame):
+            for child in widget.winfo_children():
+                if child not in self.color_exception:
+                    self.set_widget_style(child, bg_color)
+        else:
+            for child in widget.winfo_children():
+                if isinstance(child, Frame):
+                    self.set_widget_style(child, bg_color)
 
     def select_audio_path(self):
         self.logger.debug('Audio path clicked')

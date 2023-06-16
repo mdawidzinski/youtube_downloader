@@ -259,12 +259,12 @@ class SettingsMenu:
         self.set_widget_style(self.root, bg_color)
 
     def set_widget_style(self, widget, bg_color):
-        widget.configure(background=bg_color)
+        if not isinstance(widget, Entry):
+            widget.configure(background=bg_color)
 
         if isinstance(widget, Frame):
             for child in widget.winfo_children():
-                if child not in self.color_exception:
-                    self.set_widget_style(child, bg_color)
+                self.set_widget_style(child, bg_color)
         else:
             for child in widget.winfo_children():
                 if isinstance(child, Frame):

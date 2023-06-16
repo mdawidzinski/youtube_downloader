@@ -1,10 +1,10 @@
 from tkinter import *
 from tkinter.ttk import Combobox
+from tkinter import colorchooser
 
 
 # TODO in progres.. progress bar
 # TODO invalid link WARNING
-bg_color = '#9DF1DF'
 
 
 class DownloaderGui:
@@ -241,6 +241,7 @@ class SettingsMenu:
         self.path_controller = path_controller
         self.logger = logger
         self.root.option_add('*Font', 'Arial 12')
+        self.bg_color = '#9DF1DF'
 
         self.menu_bar = Menu(self.root)
         self.root.config(menu=self.menu_bar)
@@ -253,10 +254,12 @@ class SettingsMenu:
         self.path_menu.add_command(label='Video', command=self.select_video_path)
 
         self.settings_menu.add_cascade(label='Destination Path:', menu=self.path_menu)
+        self.settings_menu.add_command(label='Change color', command=self.set_color)
+
         self.settings_menu.add_separator()
         self.settings_menu.add_command(label='Exit', command=root.destroy)
 
-        self.set_widget_style(self.root, bg_color)
+        self.set_widget_style(self.root, self.bg_color)
 
     def set_widget_style(self, widget, bg_color):
         if not isinstance(widget, Entry):
@@ -277,3 +280,9 @@ class SettingsMenu:
     def select_video_path(self):
         self.logger.debug('Video path clicked')
         self.path_controller.select_save_path('video')
+
+    def set_color(self):
+        color = colorchooser.askcolor(title='Pick color')
+        if color[1]:
+            self.bg_color = color[1]
+            self.set_widget_style(self.root, self.bg_color)

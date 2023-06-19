@@ -110,8 +110,6 @@ class DownloaderGui:
         self.color_exception = [self.start_hour_entry, self.start_minute_entry, self.start_second_entry,
                                 self.end_hour_entry, self.end_minute_entry, self.end_second_entry, self.url_entry]
 
-
-
     def create_time_entries(self, frame, row, textvariable):
         hour_label = Label(frame, text='HH:')
         hour_label.grid(row=row, column=0)
@@ -273,17 +271,17 @@ class SettingsMenu:
 
         self.set_widget_style(self.root, self.background_color)
 
-    def set_widget_style(self, widget, bg_color):
+    def set_widget_style(self, widget, background_color):
         if not isinstance(widget, Entry):
-            widget.configure(background=bg_color)
+            widget.configure(background=background_color)
 
         if isinstance(widget, Frame):
             for child in widget.winfo_children():
-                self.set_widget_style(child, bg_color)
+                self.set_widget_style(child, background_color)
         else:
             for child in widget.winfo_children():
                 if isinstance(child, Frame):
-                    self.set_widget_style(child, bg_color)
+                    self.set_widget_style(child, background_color)
 
     def select_audio_path(self):
         self.logger.debug('Audio path clicked')

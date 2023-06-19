@@ -242,16 +242,16 @@ class SettingsMenu:
         self.path_controller = path_controller
         self.logger = logger
         self.root.option_add('*Font', 'Arial 12')
-        self.bg_color = ''
+        self.background_color = ''
         self.default_color = {'color': '#9DF1DF'}
 
         self.color = load_data_from_json(CONFIG_FILE)
 
         if 'color' in self.color:
-            self.bg_color = self.color['color']
-            self.default_color['color'] = self.bg_color
+            self.background_color = self.color['color']
+            self.default_color['color'] = self.background_color
         else:
-            self.bg_color = self.default_color['color']
+            self.background_color = self.default_color['color']
 
         save_data_to_json(self.default_color, CONFIG_FILE)
 
@@ -271,7 +271,7 @@ class SettingsMenu:
         self.settings_menu.add_separator()
         self.settings_menu.add_command(label='Exit', command=root.destroy)
 
-        self.set_widget_style(self.root, self.bg_color)
+        self.set_widget_style(self.root, self.background_color)
 
     def set_widget_style(self, widget, bg_color):
         if not isinstance(widget, Entry):
@@ -296,7 +296,7 @@ class SettingsMenu:
     def set_color(self):
         color = colorchooser.askcolor(title='Pick color')
         if color[1]:
-            self.bg_color = color[1]
-            self.set_widget_style(self.root, self.bg_color)
+            self.background_color = color[1]
+            self.set_widget_style(self.root, self.background_color)
             self.default_color = {'color': color[1]}
             save_data_to_json(self.default_color, CONFIG_FILE)

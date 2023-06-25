@@ -1,11 +1,12 @@
 from tkinter import *
+from tkinter import messagebox
 from tkinter.ttk import Combobox
 from tkinter import colorchooser
+from utils.url_utils import check_url_invalidity
 from utils.config_utils import load_data_from_json, save_data_to_json
 
 
 CONFIG_FILE = 'configs/gui_config.json'
-# TODO invalid link WARNING
 
 
 class DownloaderGui:
@@ -114,6 +115,7 @@ class DownloaderGui:
 
         minute_entry = Entry(frame, width=2, validate="key", textvariable=textvariable[1],
                              validatecommand=(self.root.register(self.validate_time_entry), "%P"))
+
         minute_entry.grid(row=row, column=3)
         minute_entry.insert(END, "00")
         minute_entry.bind("<FocusIn>", self.clear_entry)
@@ -159,6 +161,13 @@ class DownloaderGui:
         return False
 
     def download(self):
+        # Validation phase of YT link
+        url = self.url_entry.get()
+        warn_title, warn_message = url_utils.check_url_invalidity(url)
+        if warn_title is not None and warn_message is not None:
+            messagebox.showwarning(warn_title, warn_message)
+            return
+
         self.download_button.configure(text='Downloading...')
         self.download_button.update_idletasks()  # refresh app allows change text
 

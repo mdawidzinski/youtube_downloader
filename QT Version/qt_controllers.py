@@ -79,8 +79,9 @@ class YoutubeDownloaderController:
     def download(self, url: str, format_type: str, start_time: str, end_time: str, author: str, title: str) -> None:
         """Set up download process using provided data from GUI"""
         self.set_url(url)
-        x = self.model.get_yt()
-        if x is not None:
+        yt = self.model.get_yt()
+
+        if yt is not None:
             self.set_filename(author, title)
 
             format_type = format_type

@@ -45,14 +45,18 @@ class YoutubeDownloaderModel:
         duration = int(yt.length)
         return duration
 
-    def download_video(self, start_time: str, end_time: str, split: bool) -> str:
+    def download_video(self, start_time: str, end_time: str, split: bool) -> Union[str, None]:
         """Method responsible for downloading video.
 
         If split is true it use ffmpeg to cut downloaded file."""
         yt = self.get_yt()
         file_name = self.file_name
 
-        video = yt.streams.get_highest_resolution()  # extract video from YouTube
+        try:
+            video = yt.streams.get_highest_resolution()  # extract video from YouTube
+        except Exception as e:
+            QMessageBox.warning(None, "Cannot download file", f"{e}")
+            return None
 
         folder_creation = config_utils.create_folder(self.video_folder_path)
 
@@ -67,7 +71,14 @@ class YoutubeDownloaderModel:
         if os.path.exists(file_path_name):
             file_path_name = config_utils.set_file_name(file_path_name)
 
-        video.download(filename=file_path_name)
+        try:
+            video.download(filename=file_path_name)
+        except Exception as e:
+            if 'Invalid argument' in str(e):
+                QMessageBox.warning(None, "Name error", "File name or title contains invalid symbol")
+            else:
+                QMessageBox.warning(None, "Warring", f'Error occurred {e}')
+            return None
 
         if split:
             file_path_name = self.cut_file(file_path_name, file_name, start_time, end_time)
@@ -77,21 +88,26 @@ class YoutubeDownloaderModel:
     def get_highest_bitrate_audio_stream(self) -> Optional[Stream]:
         """Method returned audio stream with highest bitrate"""
         yt = self.get_yt()
-        audio_streams = yt.streams.filter(only_audio=True)
+        try:
+            audio_streams = yt.streams.filter(only_audio=True)
+            audio_streams = sorted(audio_streams, key=lambda stream: int(stream.abr[:-4]), reverse=True)
 
-        audio_streams = sorted(audio_streams, key=lambda stream: int(stream.abr[:-4]), reverse=True)
+            for audio_stream in audio_streams:
+                if audio_stream.mime_type == 'audio/mp4':
+                    return audio_stream
+        except Exception as e:
+            QMessageBox.warning(None, "Cannot download file", f"{e}")
+            return None
 
-        for audio_stream in audio_streams:
-            if audio_stream.mime_type == 'audio/mp4':
-                return audio_stream
-
-    def download_mp4(self, start_time: str, end_time: str, split: bool) -> str:
+    def download_mp4(self, start_time: str, end_time: str, split: bool) -> Union[str, None]:
         """Method responsible for downloading video.
 
         If split is true it use ffmpeg to cut downloaded file."""
         file_name = self.file_name
 
         audio_stream = self.get_highest_bitrate_audio_stream()
+        if audio_stream is None:
+            return None
 
         folder_creation = config_utils.create_folder(self.audio_folder_path)
 
@@ -106,7 +122,14 @@ class YoutubeDownloaderModel:
         if os.path.exists(file_path_name):
             file_path_name = config_utils.set_file_name(file_path_name)
 
-        audio_stream.download(filename=file_path_name)
+        try:
+            audio_stream.download(filename=file_path_name)
+        except Exception as e:
+            if 'Invalid argument' in str(e):
+                QMessageBox.warning(None, "Name error", "File name or title contains invalid symbol")
+            else:
+                QMessageBox.warning(None, "Warring", f'Error occurred {e}')
+            return None
 
         if split:
 
